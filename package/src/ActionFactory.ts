@@ -1,5 +1,5 @@
 import Action from './Action'
-import { CrudModuleConfig } from './types/types'
+import type { CrudModuleConfig } from './types/types'
 
 export default class ActionFactory {
   private readonly config: CrudModuleConfig

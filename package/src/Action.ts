@@ -1,5 +1,5 @@
 import { CrudActions } from './types/types'
-import { ActionConfig, ActionContext } from './types/types'
+import type { ActionConfig, ActionContext } from './types/types'
 
 export default class Action {
   private readonly config: ActionConfig
