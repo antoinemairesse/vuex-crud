@@ -11,10 +11,10 @@ import type {
   APIDefinitionFunction,
   CustomAPIDefinitionFunction,
   APIDefinition,
+  CrudModuleConfig,
 } from './types/types'
 import { CrudActions } from './types/types'
 import { isArray } from './utils'
-import { CrudModuleConfig } from './types/types'
 
 class CrudModuleFactory {
   instance: CrudModule
@@ -337,7 +337,7 @@ class CrudModule {
    * @param {AxiosStatic} axios - The Axios instance to be used for API requests.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAxios(axios: AxiosStatic): CrudModule {
+  setAxios(axios: AxiosStatic): this {
     this.axios = axios
     return this
   }
@@ -347,7 +347,7 @@ class CrudModule {
    * @param {string} value - The name of the ID attribute.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setIdAttribute(value: string): CrudModule {
+  setIdAttribute(value: string): this {
     this.idAttribute = value
     return this
   }
@@ -357,7 +357,7 @@ class CrudModule {
    * @param {boolean} value - Whether to update the state after an action.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setUpdateStateAfterAction(value: boolean): CrudModule {
+  setUpdateStateAfterAction(value: boolean): this {
     this.updateStateAfterAction = Boolean(value)
     return this
   }
@@ -367,7 +367,7 @@ class CrudModule {
    * @param {boolean} value - Whether to refresh data after an action.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setRefreshAfterAction(value: boolean): CrudModule {
+  setRefreshAfterAction(value: boolean): this {
     this.refreshAfterAction = Boolean(value)
     return this
   }
@@ -377,7 +377,7 @@ class CrudModule {
    * @param {boolean} value - Whether to commit state changes during actions.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setCommitState(value: boolean): CrudModule {
+  setCommitState(value: boolean): this {
     this.commitState = Boolean(value)
     return this
   }
@@ -388,7 +388,7 @@ class CrudModule {
    * @param {CustomAPIDefinitionFunction} func - The custom API definition function that will be used to define the API.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setCustomAPIDefinition(func: CustomAPIDefinitionFunction): CrudModule {
+  setCustomAPIDefinition(func: CustomAPIDefinitionFunction): this {
     this.customAPIDefinition = func
     return this
   }
@@ -398,7 +398,7 @@ class CrudModule {
    * @param {ActionHandler} func - The function to be executed on action success.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  onActionSuccess(func: ActionHandler): CrudModule {
+  onActionSuccess(func: ActionHandler): this {
     this.handleActionSuccess = func
     return this
   }
@@ -408,7 +408,7 @@ class CrudModule {
    * @param {ActionHandler} func - The function to be executed on action error.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  onActionError(func: ActionHandler): CrudModule {
+  onActionError(func: ActionHandler): this {
     this.handleActionError = func
     return this
   }

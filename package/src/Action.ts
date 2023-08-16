@@ -71,13 +71,12 @@ export default class Action {
   }
 
   get actions() {
-    const { actionName, actionType } = this.config
+    const { actionName } = this.config
 
     return {
-      [actionName]: function (...args) {
-        //@ts-ignore
-        return this.execute.call(this, ...args, actionType)
-      }.bind(this),
+      [actionName]: (...args: [ActionContext, any]) => {
+        return this.execute(...args)
+      },
     }
   }
 
@@ -87,7 +86,7 @@ export default class Action {
     return {
       [loadingMutation.name]: function (state: any, { data }: any) {
         state[loadingMutation.state] = Boolean(data)
-      }.bind(this),
+      },
     }
   }
 }
