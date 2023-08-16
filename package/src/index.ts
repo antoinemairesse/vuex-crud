@@ -11,7 +11,7 @@ import type {
   APIDefinitionFunction,
   CustomAPIDefinitionFunction,
   APIDefinition,
-  CrudModuleConfig,
+  CrudModuleConfig
 } from './types/types'
 import { CrudActions } from './types/types'
 import { isArray } from './utils'
@@ -26,7 +26,7 @@ class CrudModuleFactory {
   create(resource: string): Module {
     const obj = Object.assign(
       Object.create(Object.getPrototypeOf(this.instance)),
-      this.instance,
+      this.instance
     )
     obj.resourceName = new ResourceName(resource)
     return obj.getModule()
@@ -37,8 +37,8 @@ class CrudModuleFactory {
  * Represents a CRUD module.
  */
 class CrudModule {
-  private resourceName: ResourceName
-  private APIDefinition: APIDefinitionFunction
+  private readonly resourceName: ResourceName
+  private readonly generateAxiosRequestConfig: APIDefinitionFunction
   private customAPIDefinition: CustomAPIDefinitionFunction | null
   private idAttribute: string
   private additionalActions: Actions
@@ -70,32 +70,48 @@ class CrudModule {
      * @returns {Object} An object describing the API endpoint for the specified action on the resource.
      * @throws {Error} If the action is not one of the supported CRUD actions.
      * @example
-     * const apiDefinition = APIDefinition('users', crudActions.getItem, '5f92b59856e148001f2a31e4');
+     * const apiDefinition = generateAxiosRequestConfig('users', crudActions.getItem, '5f92b59856e148001f2a31e4');
      * // Returns: { method: 'GET', url: '/users/5f92b59856e148001f2a31e4' }
      */
-    this.APIDefinition = (resource, action, actionData) => {
+    this.generateAxiosRequestConfig = (resource, action, actionData) => {
       let res: APIDefinition
 
+      const commonProperties = {
+        dataMapper: (e: any) => e,
+        stateMapper: (e: any) => e
+      }
+
       if (action === CrudActions.fetchItems)
-        res = { method: 'GET', url: `/${resource}` }
+        res = {
+          method: 'GET',
+          url: `/${resource}`,
+          ...commonProperties
+        }
       else if (action === CrudActions.getItem)
-        res = { method: 'GET', url: `/${resource}/${actionData}` }
+        res = {
+          method: 'GET',
+          url: `/${resource}/${actionData}`,
+          ...commonProperties
+        }
       else if (action === CrudActions.createItem)
         res = {
           method: 'POST',
           url: `/${resource}`,
           data: actionData,
+          ...commonProperties
         }
       else if (action === CrudActions.deleteItem)
         res = {
           method: 'DELETE',
           url: `/${resource}/${actionData}`,
+          ...commonProperties
         }
       else if (action === CrudActions.updateItem)
         res = {
           method: 'PUT',
           url: `/${resource}/${actionData[this.idAttribute]}`,
           data: actionData,
+          ...commonProperties
         }
       else throw new Error(`${action} is not a valid CRUD action`)
 
@@ -164,7 +180,7 @@ class CrudModule {
   private get states() {
     return {
       items: this.resourceName.plural.toLowerCase(),
-      currentItem: `current${this.resourceName.singular}`,
+      currentItem: `current${this.resourceName.singular}`
     }
   }
 
@@ -174,7 +190,7 @@ class CrudModule {
       setCurrentItem: `SET_CURRENT_${this.resourceName.singular.toUpperCase()}`,
       addItem: `ADD_${this.resourceName.singular.toUpperCase()}`,
       updateItem: `UPDATE_${this.resourceName.singular.toUpperCase()}`,
-      deleteItem: `DELETE_${this.resourceName.singular.toUpperCase()}`,
+      deleteItem: `DELETE_${this.resourceName.singular.toUpperCase()}`
     }
   }
 
@@ -189,48 +205,48 @@ class CrudModule {
       actionFactory.create(
         {
           name: `SET_FETCHING_${this.resourceName.plural.toUpperCase()}`,
-          state: `fetching${this.resourceName.plural}`,
+          state: `fetching${this.resourceName.plural}`
         } as LoadingMutation,
         this.mutations.setItems,
         `fetch${this.resourceName.plural}`,
-        CrudActions.fetchItems,
+        CrudActions.fetchItems
       ),
       actionFactory.create(
         {
           name: `SET_GETTING_${this.resourceName.plural.toUpperCase()}`,
-          state: `getting${this.resourceName.plural}`,
+          state: `getting${this.resourceName.plural}`
         } as LoadingMutation,
         this.mutations.setCurrentItem,
         `get${this.resourceName.singular}`,
-        CrudActions.getItem,
+        CrudActions.getItem
       ),
       actionFactory.create(
         {
           name: `SET_CREATING_${this.resourceName.plural.toUpperCase()}`,
-          state: `creating${this.resourceName.plural}`,
+          state: `creating${this.resourceName.plural}`
         } as LoadingMutation,
         this.mutations.addItem,
         `create${this.resourceName.singular}`,
-        CrudActions.createItem,
+        CrudActions.createItem
       ),
       actionFactory.create(
         {
           name: `SET_UPDATING_${this.resourceName.plural.toUpperCase()}`,
-          state: `updating${this.resourceName.plural}`,
+          state: `updating${this.resourceName.plural}`
         } as LoadingMutation,
         this.mutations.updateItem,
         `update${this.resourceName.singular}`,
-        CrudActions.updateItem,
+        CrudActions.updateItem
       ),
       actionFactory.create(
         {
           name: `SET_DELETING_${this.resourceName.plural.toUpperCase()}`,
-          state: `deleting${this.resourceName.plural}`,
+          state: `deleting${this.resourceName.plural}`
         } as LoadingMutation,
         this.mutations.deleteItem,
         `delete${this.resourceName.singular}`,
-        CrudActions.deleteItem,
-      ),
+        CrudActions.deleteItem
+      )
     ]
   }
 
@@ -259,7 +275,7 @@ class CrudModule {
       ...this.actions.reduce((accumulator, currentValue) => {
         return Object.assign(accumulator, { ...currentValue.actions })
       }, {}),
-      ...this.additionalActions,
+      ...this.additionalActions
     }
   }
 
@@ -275,7 +291,7 @@ class CrudModule {
       ...Object.values(this.states).reduce((accumulator, currentValue) => {
         return Object.assign(accumulator, { [currentValue]: null })
       }, {}),
-      ...this.additionalState,
+      ...this.additionalState
     }
   }
 
@@ -298,23 +314,23 @@ class CrudModule {
         if (!state[this.states.items]) state[this.states.items] = []
         if (isArray<any>(state[this.states.items])) {
           state[this.states.items].push(data)
-        } else throw new Error('') // TODO
+        } else throw new Error(`${this.states.items} state is not an array`)
       },
       [this.mutations.updateItem]: (state, { data }) => {
         if (isArray<any>(state[this.states.items])) {
           const index = state[this.states.items].findIndex(
-            e => e[this.idAttribute] === data[this.idAttribute],
+            e => e[this.idAttribute] === data[this.idAttribute]
           )
           if (index !== -1) state[this.states.items][index] = data
-        } else throw new Error('') // TODO
+        } else throw new Error(`${this.states.items} state is not an array`)
       },
       [this.mutations.deleteItem]: (state, { actionData }) => {
         if (isArray<any>(state[this.states.items])) {
           state[this.states.items] = state[this.states.items].filter(
-            e => e[this.idAttribute] !== actionData,
+            e => e[this.idAttribute] !== actionData
           )
         }
-      },
+      }
     }
   }
 
@@ -328,7 +344,7 @@ class CrudModule {
       state: this.buildState(),
       actions: this.buildActions(),
       mutations: this.buildMutations(),
-      getters: {},
+      getters: {}
     }
   }
 
@@ -415,12 +431,12 @@ class CrudModule {
 
   get config(): CrudModuleConfig {
     return {
-      APIDefinition: this.APIDefinition,
+      generateAxiosRequestConfig: this.generateAxiosRequestConfig,
       resourceName: this.resourceName,
       axios: this.axios,
       commitState: this.commitState,
       handleActionSuccess: this.handleActionSuccess,
-      handleActionError: this.handleActionError,
+      handleActionError: this.handleActionError
     }
   }
 

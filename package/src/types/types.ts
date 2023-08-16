@@ -27,7 +27,7 @@ export type LoadingMutation = {
 
 export type Mutation = (
   state: State,
-  data: { data: any; actionData: any },
+  data: { data: any; actionData: any }
 ) => void
 
 export type Mutations = {
@@ -37,7 +37,7 @@ export type Mutations = {
 export type ActionHandler = (
   actionType: string,
   data: any,
-  resource: string,
+  resource: string
 ) => void
 
 export type Module = {
@@ -51,25 +51,25 @@ export type Module = {
 export type APIDefinition = CreateAxiosDefaults & {
   url: string
   method: Method | string
-  dataMapper?: (data: any) => any
-  stateMapper?: (data: any) => any
+  dataMapper: (data: any) => any
+  stateMapper: (data: any) => any
 }
 
 export type APIDefinitionFunction = (
   resource: string,
   action: string,
-  actionData: any,
+  actionData: any
 ) => APIDefinition
 
 export type CustomAPIDefinitionFunction = (
   originalAPIDefinition: APIDefinition,
   resource: string,
   action: string,
-  actionData: any,
+  actionData: any
 ) => APIDefinition
 
 export type CrudModuleConfig = {
-  APIDefinition: APIDefinitionFunction
+  generateAxiosRequestConfig: APIDefinitionFunction
   resourceName: ResourceName
   axios: AxiosStatic
   commitState: boolean
@@ -77,13 +77,7 @@ export type CrudModuleConfig = {
   handleActionError: ActionHandler
 }
 
-export type ActionConfig = {
-  APIDefinition: APIDefinitionFunction
-  resourceName: ResourceName
-  axios: AxiosStatic
-  commitState: boolean
-  handleActionSuccess: ActionHandler
-  handleActionError: ActionHandler
+export type ActionConfig = CrudModuleConfig & {
   actionName: string
   actionType: string
   loadingMutation: LoadingMutation
@@ -95,5 +89,5 @@ export enum CrudActions {
   getItem = 'getItem',
   createItem = 'createItem',
   updateItem = 'updateItem',
-  deleteItem = 'deleteItem',
+  deleteItem = 'deleteItem'
 }

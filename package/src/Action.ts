@@ -16,26 +16,20 @@ export default class Action {
   async execute({ commit }: ActionContext, actionData: any) {
     const {
       loadingMutation,
-      APIDefinition,
+      generateAxiosRequestConfig,
       actionType,
       resourceName,
       axios,
       commitState,
       mutationName,
       handleActionSuccess,
-      handleActionError,
+      handleActionError
     } = this.config
 
     commit(loadingMutation.name, { data: true })
 
-    // todo rename
-    const def = APIDefinition(resourceName.original, actionType, actionData)
-
-    const { method, url, params, data } = def
-    let { dataMapper, stateMapper } = def
-
-    dataMapper ||= (e: any) => e
-    stateMapper ||= (e: any) => e
+    const { dataMapper, stateMapper, method, url, params, data } =
+      generateAxiosRequestConfig(resourceName.original, actionType, actionData)
 
     try {
       const res = await axios({ method, url, params, data })
@@ -44,7 +38,7 @@ export default class Action {
       handleActionSuccess(
         actionType,
         stateMapper(res.data),
-        resourceName.original,
+        resourceName.original
       )
       return dataMapper(res.data)
     } catch (err) {
@@ -58,7 +52,7 @@ export default class Action {
     return [
       CrudActions.deleteItem,
       CrudActions.updateItem,
-      CrudActions.createItem,
+      CrudActions.createItem
     ].includes(type)
   }
 
@@ -66,7 +60,7 @@ export default class Action {
     const { loadingMutation } = this.config
 
     return {
-      [loadingMutation.state]: null,
+      [loadingMutation.state]: null
     }
   }
 
@@ -76,7 +70,7 @@ export default class Action {
     return {
       [actionName]: (...args: [ActionContext, any]) => {
         return this.execute(...args)
-      },
+      }
     }
   }
 
@@ -86,7 +80,7 @@ export default class Action {
     return {
       [loadingMutation.name]: function (state: any, { data }: any) {
         state[loadingMutation.state] = Boolean(data)
-      },
+      }
     }
   }
 }

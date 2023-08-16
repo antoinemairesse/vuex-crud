@@ -13,7 +13,7 @@ export default class ActionFactory {
       actionName,
       actionType,
       loadingMutation,
-      mutationName,
+      mutationName
     })
   }
 }
