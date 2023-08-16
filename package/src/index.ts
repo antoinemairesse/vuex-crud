@@ -11,9 +11,10 @@ import type {
   APIDefinitionFunction,
   CustomAPIDefinitionFunction,
   APIDefinition,
-  CrudModuleConfig
+  CrudModuleConfig,
+  PartialAPIDefinition
 } from './types/types'
-import { CrudActions } from './types/types'
+import { CrudAction } from './types/types'
 import { isArray } from './utils'
 
 class CrudModuleFactory {
@@ -66,58 +67,40 @@ class CrudModule {
      *
      * @param {string} resource - The name of the resource.
      * @param {string} action - The CRUD action to perform (fetchItems, getItem, createItem, deleteItem, updateItem).
-     * @param {string | Object} actionData - Data passed to the vuex action (e.g., item data for create/update, item ID for getItem, etc.).
-     * @returns {Object} An object describing the API endpoint for the specified action on the resource.
+     * @param {any} actionData - Data passed to the vuex action (e.g., item data for create/update, item ID for getItem, etc.).
+     * @returns {APIDefinition} An object describing the API endpoint for the specified action on the resource.
      * @throws {Error} If the action is not one of the supported CRUD actions.
      * @example
-     * const apiDefinition = generateAxiosRequestConfig('users', crudActions.getItem, '5f92b59856e148001f2a31e4');
+     * const apiDefinition = generateAxiosRequestConfig('users', CrudAction.getItem, '5f92b59856e148001f2a31e4');
      * // Returns: { method: 'GET', url: '/users/5f92b59856e148001f2a31e4' }
      */
     this.generateAxiosRequestConfig = (resource, action, actionData) => {
-      let res: APIDefinition
+      let partialDef: PartialAPIDefinition
 
-      const commonProperties = {
+      if (action === CrudAction.fetchItems)
+        partialDef = { method: 'GET', url: `/${resource}` }
+      else if (action === CrudAction.getItem)
+        partialDef = { method: 'GET', url: `/${resource}/${actionData}` }
+      else if (action === CrudAction.createItem)
+        partialDef = { method: 'POST', url: `/${resource}`, data: actionData }
+      else if (action === CrudAction.deleteItem)
+        partialDef = { method: 'DELETE', url: `/${resource}/${actionData}` }
+      else if (action === CrudAction.updateItem)
+        partialDef = {
+          method: 'PUT',
+          url: `/${resource}/${actionData[this.idAttribute]}`,
+          data: actionData
+        }
+      else throw new Error(`${action} is not a valid CRUD action`)
+
+      const definition: APIDefinition = {
+        ...partialDef,
         dataMapper: (e: any) => e,
         stateMapper: (e: any) => e
       }
 
-      if (action === CrudActions.fetchItems)
-        res = {
-          method: 'GET',
-          url: `/${resource}`,
-          ...commonProperties
-        }
-      else if (action === CrudActions.getItem)
-        res = {
-          method: 'GET',
-          url: `/${resource}/${actionData}`,
-          ...commonProperties
-        }
-      else if (action === CrudActions.createItem)
-        res = {
-          method: 'POST',
-          url: `/${resource}`,
-          data: actionData,
-          ...commonProperties
-        }
-      else if (action === CrudActions.deleteItem)
-        res = {
-          method: 'DELETE',
-          url: `/${resource}/${actionData}`,
-          ...commonProperties
-        }
-      else if (action === CrudActions.updateItem)
-        res = {
-          method: 'PUT',
-          url: `/${resource}/${actionData[this.idAttribute]}`,
-          data: actionData,
-          ...commonProperties
-        }
-      else throw new Error(`${action} is not a valid CRUD action`)
-
-      if (this.customAPIDefinition)
-        return this.customAPIDefinition(res, resource, action, actionData)
-      else return res
+      if (!this.customAPIDefinition) return definition
+      return this.customAPIDefinition(definition, resource, action, actionData)
     }
 
     this.customAPIDefinition = null
@@ -209,43 +192,43 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.setItems,
         `fetch${this.resourceName.plural}`,
-        CrudActions.fetchItems
+        CrudAction.fetchItems
       ),
       actionFactory.create(
         {
-          name: `SET_GETTING_${this.resourceName.plural.toUpperCase()}`,
-          state: `getting${this.resourceName.plural}`
+          name: `SET_GETTING_${this.resourceName.singular.toUpperCase()}`,
+          state: `getting${this.resourceName.singular}`
         } as LoadingMutation,
         this.mutations.setCurrentItem,
         `get${this.resourceName.singular}`,
-        CrudActions.getItem
+        CrudAction.getItem
       ),
       actionFactory.create(
         {
-          name: `SET_CREATING_${this.resourceName.plural.toUpperCase()}`,
-          state: `creating${this.resourceName.plural}`
+          name: `SET_CREATING_${this.resourceName.singular.toUpperCase()}`,
+          state: `creating${this.resourceName.singular}`
         } as LoadingMutation,
         this.mutations.addItem,
         `create${this.resourceName.singular}`,
-        CrudActions.createItem
+        CrudAction.createItem
       ),
       actionFactory.create(
         {
-          name: `SET_UPDATING_${this.resourceName.plural.toUpperCase()}`,
-          state: `updating${this.resourceName.plural}`
+          name: `SET_UPDATING_${this.resourceName.singular.toUpperCase()}`,
+          state: `updating${this.resourceName.singular}`
         } as LoadingMutation,
         this.mutations.updateItem,
         `update${this.resourceName.singular}`,
-        CrudActions.updateItem
+        CrudAction.updateItem
       ),
       actionFactory.create(
         {
-          name: `SET_DELETING_${this.resourceName.plural.toUpperCase()}`,
-          state: `deleting${this.resourceName.plural}`
+          name: `SET_DELETING_${this.resourceName.singular.toUpperCase()}`,
+          state: `deleting${this.resourceName.singular}`
         } as LoadingMutation,
         this.mutations.deleteItem,
         `delete${this.resourceName.singular}`,
-        CrudActions.deleteItem
+        CrudAction.deleteItem
       )
     ]
   }
@@ -445,4 +428,4 @@ class CrudModule {
   }
 }
 
-export { CrudModule, CrudActions }
+export { CrudModule, CrudAction }

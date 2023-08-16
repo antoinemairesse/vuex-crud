@@ -1,36 +1,36 @@
-import { createStore } from "vuex";
-import { CrudModule, CrudActions } from "@antoinemairesse/vuex-crud";
-import api from "@/api";
-import { ElMessage } from "element-plus";
+import { createStore } from 'vuex'
+import { CrudModule, CrudAction } from '@antoinemairesse/vuex-crud'
+import api from '@/api'
+import { ElMessage } from 'element-plus'
 
 // eslint-disable-next-line no-unused-vars
 const customAPIDef = (def, resource, action, actionData) => {
-  if (action === CrudActions.fetchItems)
+  if (action === CrudAction.fetchItems)
     Object.assign(def, {
-      stateMapper: (data) => data[resource],
-      dataMapper: (data) => data[resource],
-    });
-  return def;
-};
+      stateMapper: data => data[resource],
+      dataMapper: data => data[resource]
+    })
+  return def
+}
 
 const onActionSuccess = (action, data, resource) => {
-  ElMessage.success(`${resource} ${action}`);
-};
+  ElMessage.success(`${resource} ${action}`)
+}
 
-const CrudFactory = new CrudModule("")
+const CrudFactory = new CrudModule('')
   .setAxios(api)
   .setCustomAPIDefinition(customAPIDef)
   .onActionSuccess(onActionSuccess)
-  .getFactory();
+  .getFactory()
 
 export default createStore({
   modules: {
-    books: CrudFactory.create("books"),
-    authors: CrudFactory.create("authors"),
-    borrowers: CrudFactory.create("borrowers"),
+    books: CrudFactory.create('books'),
+    authors: CrudFactory.create('authors'),
+    borrowers: CrudFactory.create('borrowers')
     // OR :
     // books: new CrudModule('books').setAxios(api).setCustomAPIDefinition(customAPIDef).onActionSuccess(onActionSuccess).getModule(),
     // authors: new CrudModule('authors').setAxios(api).setCustomAPIDefinition(customAPIDef).onActionSuccess(onActionSuccess).getModule(),
     // borrowers: new CrudModule('borrowers').setAxios(api).setCustomAPIDefinition(customAPIDef).onActionSuccess(onActionSuccess).getModule()
-  },
-});
+  }
+})

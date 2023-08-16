@@ -1,161 +1,79 @@
 <template>
-  <div class="container">
-    <h1 class="page-title">Books and Authors</h1>
-
-    <div class="buttons">
-      <el-button @click="fetchBooks" v-loading="fetchingBooks" :disabled="fetchingBooks" type="primary">Fetch Books</el-button>
-      <el-button @click="fetchAuthors" v-loading="fetchingAuthors" :disabled="fetchingAuthors" type="primary">Fetch Authors</el-button>
+  <div class="p-4">
+    <div class="flex gap-2 items-center mb-4">
+      <h1 class="text-3xl font-poppins">Books and Authors</h1>
+      <button
+        class="primary-btn"
+        v-loading="fetchingBooks"
+        :disabled="fetchingBooks"
+        @click="fetchBooks"
+      >
+        Fetch Books
+      </button>
+      <button
+        class="primary-btn"
+        v-loading="fetchingAuthors"
+        :disabled="fetchingAuthors"
+        @click="fetchAuthors"
+      >
+        Fetch Authors
+      </button>
     </div>
 
-    <div class="section">
-      <h2>Create Book</h2>
-      <el-card class="card">
-        <h3>New Book:</h3>
-        <el-form :model="newBook">
-          <el-form-item label="Title">
-            <el-input v-model="newBook.title"></el-input>
-          </el-form-item>
-          <el-form-item label="Year">
-            <el-input v-model="newBook.publication_year"></el-input>
-          </el-form-item>
-          <el-form-item label="Genre">
-            <el-input v-model="newBook.genre"></el-input>
-          </el-form-item>
-          <el-button @click="createBook(newBook)" type="primary">Create Book</el-button>
-        </el-form>
-      </el-card>
-    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex gap-2 flex-col">
+        <BookForm />
 
-    <div class="section">
-      <h2>Create Author</h2>
-      <el-card class="card">
-        <h3>New Author:</h3>
-        <el-form :model="newAuthor">
-          <el-form-item label="Name">
-            <el-input v-model="newAuthor.name"></el-input>
-          </el-form-item>
-          <el-form-item label="Birth Year">
-            <el-input v-model="newAuthor.birth_year"></el-input>
-          </el-form-item>
-          <el-button @click="createAuthor(newAuthor)" type="primary">Create Author</el-button>
-        </el-form>
-      </el-card>
-    </div>
-
-    <div class="section">
-      <h2>Books</h2>
-      <el-card class="card">
-        <div v-loading="fetchingBooks">
-          <div v-if="books" class="list">
-            <div class="list-item" v-for="book in books" :key="book.id">
-              <p class="book-info">{{ book.title }} - {{ book.publication_year }} - {{ book.genre }}</p>
-              <el-button @click="deleteBook(book.id)" class="delete-button">Delete</el-button>
+        <div class="card">
+          <h1 class="text-xl mb-4 font-poppins">Books :</h1>
+          <div v-loading="fetchingBooks">
+            <div v-if="books" class="flex gap-2 flex-wrap">
+              <Book v-for="book in books" :key="book.id" :book="book" />
             </div>
+            <div v-else>No Data</div>
           </div>
-          <span v-else>No data</span>
         </div>
-      </el-card>
-    </div>
+      </div>
 
-    <div class="section">
-      <h2>Authors</h2>
-      <el-card class="card">
-        <div v-loading="fetchingAuthors">
-          <div v-if="authors" class="list">
-            <el-row>
-              <el-col v-for="author in authors" :key="author.id" :span="8">
-                <el-card>
-                  <p class="author-info">{{ author.name }} - {{ author.birth_year }}</p>
-                  <el-button @click="deleteAuthor(author.id)" class="delete-button">Delete</el-button>
-                </el-card>
-              </el-col>
-            </el-row>
+      <div class="flex gap-2 flex-col">
+        <AuthorForm />
+        <div class="card">
+          <h1 class="text-xl mb-4 font-poppins">Authors :</h1>
+          <div v-loading="fetchingAuthors">
+            <div v-if="authors" class="flex gap-2 flex-wrap">
+              <Author
+                v-for="author in authors"
+                :key="author.id"
+                :author="author"
+              />
+            </div>
+            <div v-else>No Data</div>
           </div>
-          <span v-else>No data</span>
         </div>
-      </el-card>
+      </div>
     </div>
   </div>
 </template>
 
-
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState } from 'vuex'
+import Book from '@/components/Book.vue'
+import Author from '@/components/Author.vue'
+import BookForm from '@/components/BookForm.vue'
+import AuthorForm from '@/components/AuthorForm.vue'
 
 export default {
   name: 'App',
-  data() {
-    return {
-      newBook: {
-        title: '',
-        publication_year: '',
-        genre: ''
-      },
-      newAuthor: {
-        name: '',
-        birth_year: ''
-      }
-    };
-  },
+  components: { AuthorForm, BookForm, Author, Book },
   computed: {
     ...mapState('books', ['books', 'fetchingBooks']),
     ...mapState('authors', ['authors', 'fetchingAuthors'])
   },
   methods: {
-    ...mapActions('books', ['fetchBooks', 'createBook', 'deleteBook']),
-    ...mapActions('authors', ['fetchAuthors', 'createAuthor', 'deleteAuthor'])
+    ...mapActions('books', ['fetchBooks']),
+    ...mapActions('authors', ['fetchAuthors'])
   }
 }
 </script>
 
-<style scoped>
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.page-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.section {
-  margin-bottom: 20px;
-}
-
-.card {
-  padding: 20px;
-}
-
-.list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.list-item {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-}
-
-.book-info,
-.author-info {
-  margin: 10px 0;
-  padding: 10px;
-}
-
-.delete-button {
-  color: red;
-}
-</style>
+<style scoped></style>

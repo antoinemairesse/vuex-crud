@@ -1,5 +1,6 @@
 import Action from './Action'
-import type { CrudModuleConfig } from './types/types'
+import type { CrudModuleConfig, LoadingMutation } from './types/types'
+import { CrudAction } from './types/types'
 
 export default class ActionFactory {
   private readonly config: CrudModuleConfig
@@ -7,7 +8,12 @@ export default class ActionFactory {
     this.config = config
   }
 
-  create(loadingMutation, mutationName, actionName, actionType) {
+  create(
+    loadingMutation: LoadingMutation,
+    mutationName: string,
+    actionName: string,
+    actionType: CrudAction
+  ) {
     return new Action({
       ...this.config,
       actionName,

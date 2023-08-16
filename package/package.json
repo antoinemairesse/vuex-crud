@@ -13,8 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
-    "pluralize": "^8.0.0",
-    "vuex": "^4.1.0"
+    "pluralize": "^8.0.0"
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.4.2",

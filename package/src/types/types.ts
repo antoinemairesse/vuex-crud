@@ -48,6 +48,11 @@ export type Module = {
   getters: object
 }
 
+export type PartialAPIDefinition = CreateAxiosDefaults & {
+  url: string
+  method: Method | string
+}
+
 export type APIDefinition = CreateAxiosDefaults & {
   url: string
   method: Method | string
@@ -57,14 +62,14 @@ export type APIDefinition = CreateAxiosDefaults & {
 
 export type APIDefinitionFunction = (
   resource: string,
-  action: string,
+  action: CrudAction,
   actionData: any
 ) => APIDefinition
 
 export type CustomAPIDefinitionFunction = (
   originalAPIDefinition: APIDefinition,
   resource: string,
-  action: string,
+  action: CrudAction,
   actionData: any
 ) => APIDefinition
 
@@ -79,12 +84,12 @@ export type CrudModuleConfig = {
 
 export type ActionConfig = CrudModuleConfig & {
   actionName: string
-  actionType: string
+  actionType: CrudAction
   loadingMutation: LoadingMutation
   mutationName: string
 }
 
-export enum CrudActions {
+export enum CrudAction {
   fetchItems = 'fetchItems',
   getItem = 'getItem',
   createItem = 'createItem',

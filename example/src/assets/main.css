@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.card {
+    @apply bg-gray-100 p-4 m-4 border-2 border-gray-400 rounded;
+}
+.primary-btn {
+    @apply text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 px-3 py-2 text-xs font-medium rounded-lg  text-center;
+}
