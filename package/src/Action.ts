@@ -1,4 +1,4 @@
-import { crudActions } from './index'
+import { CrudActions } from './types/types'
 import { ActionConfig, ActionContext } from './types/types'
 
 export default class Action {
@@ -56,9 +56,9 @@ export default class Action {
 
   isAction(type: any) {
     return [
-      crudActions.deleteItem,
-      crudActions.updateItem,
-      crudActions.createItem,
+      CrudActions.deleteItem,
+      CrudActions.updateItem,
+      CrudActions.createItem,
     ].includes(type)
   }
 

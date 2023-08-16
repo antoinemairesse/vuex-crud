@@ -66,5 +66,3 @@ You can further customize the module by using the methods provided by `CrudModul
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-
-Please make sure to tailor the documentation to accurately represent the features and functionalities of your module. Additionally, update the API descriptor and usage examples with relevant details based on your API structure and application requirements.

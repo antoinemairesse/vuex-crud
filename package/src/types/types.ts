@@ -89,3 +89,11 @@ export type ActionConfig = {
   loadingMutation: LoadingMutation
   mutationName: string
 }
+
+export enum CrudActions {
+  fetchItems = 'fetchItems',
+  getItem = 'getItem',
+  createItem = 'createItem',
+  updateItem = 'updateItem',
+  deleteItem = 'deleteItem',
+}

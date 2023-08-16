@@ -12,16 +12,9 @@ import type {
   CustomAPIDefinitionFunction,
   APIDefinition,
 } from './types/types'
+import { CrudActions } from './types/types'
 import { isArray } from './utils'
 import { CrudModuleConfig } from './types/types'
-
-const crudActions = {
-  fetchItems: 'fetchItems',
-  getItem: 'getItem',
-  createItem: 'createItem',
-  updateItem: 'updateItem',
-  deleteItem: 'deleteItem',
-}
 
 class CrudModuleFactory {
   instance: CrudModule
@@ -83,22 +76,22 @@ class CrudModule {
     this.APIDefinition = (resource, action, actionData) => {
       let res: APIDefinition
 
-      if (action === crudActions.fetchItems)
+      if (action === CrudActions.fetchItems)
         res = { method: 'GET', url: `/${resource}` }
-      else if (action === crudActions.getItem)
+      else if (action === CrudActions.getItem)
         res = { method: 'GET', url: `/${resource}/${actionData}` }
-      else if (action === crudActions.createItem)
+      else if (action === CrudActions.createItem)
         res = {
           method: 'POST',
           url: `/${resource}`,
           data: actionData,
         }
-      else if (action === crudActions.deleteItem)
+      else if (action === CrudActions.deleteItem)
         res = {
           method: 'DELETE',
           url: `/${resource}/${actionData}`,
         }
-      else if (action === crudActions.updateItem)
+      else if (action === CrudActions.updateItem)
         res = {
           method: 'PUT',
           url: `/${resource}/${actionData[this.idAttribute]}`,
@@ -200,7 +193,7 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.setItems,
         `fetch${this.resourceName.plural}`,
-        crudActions.fetchItems,
+        CrudActions.fetchItems,
       ),
       actionFactory.create(
         {
@@ -209,7 +202,7 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.setCurrentItem,
         `get${this.resourceName.singular}`,
-        crudActions.getItem,
+        CrudActions.getItem,
       ),
       actionFactory.create(
         {
@@ -218,7 +211,7 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.addItem,
         `create${this.resourceName.singular}`,
-        crudActions.createItem,
+        CrudActions.createItem,
       ),
       actionFactory.create(
         {
@@ -227,7 +220,7 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.updateItem,
         `update${this.resourceName.singular}`,
-        crudActions.updateItem,
+        CrudActions.updateItem,
       ),
       actionFactory.create(
         {
@@ -236,7 +229,7 @@ class CrudModule {
         } as LoadingMutation,
         this.mutations.deleteItem,
         `delete${this.resourceName.singular}`,
-        crudActions.deleteItem,
+        CrudActions.deleteItem,
       ),
     ]
   }
@@ -436,4 +429,4 @@ class CrudModule {
   }
 }
 
-export { CrudModule, crudActions }
+export { CrudModule, CrudActions }
