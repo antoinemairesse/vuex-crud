@@ -1,0 +1,188 @@
+{
+  "authors": [
+    {
+      "id": 1,
+      "name": "Jane Doe",
+      "birth_year": 1980
+    },
+    {
+      "id": 2,
+      "name": "John Smith",
+      "birth_year": 1975
+    },
+    {
+      "id": 3,
+      "name": "Emily Brown",
+      "birth_year": 1992
+    },
+    {
+      "id": 4,
+      "name": "David Lee",
+      "birth_year": 1988
+    },
+    {
+      "id": 5,
+      "name": "Anna Wilson",
+      "birth_year": 1969
+    },
+    {
+      "id": 6,
+      "name": "Michael Turner",
+      "birth_year": 1970
+    },
+    {
+      "id": 7,
+      "name": "Sophie Evans",
+      "birth_year": 1985
+    },
+    {
+      "id": 8,
+      "name": "Daniel Clark",
+      "birth_year": 1995
+    },
+    {
+      "id": 9,
+      "name": "Olivia Green",
+      "birth_year": 2000
+    },
+    {
+      "id": 10,
+      "name": "Matthew White",
+      "birth_year": 1982
+    }
+  ],
+  "books": [
+    {
+      "id": 101,
+      "title": "The Secret Garden",
+      "author_id": 1,
+      "publication_year": 2000,
+      "genre": "Fiction"
+    },
+    {
+      "id": 102,
+      "title": "The Lost Key",
+      "author_id": 2,
+      "publication_year": 2015,
+      "genre": "Mystery"
+    },
+    {
+      "id": 103,
+      "title": "Echoes of Eternity",
+      "author_id": 3,
+      "publication_year": 2022,
+      "genre": "Fantasy"
+    },
+    {
+      "id": 104,
+      "title": "Midnight Shadows",
+      "author_id": 4,
+      "publication_year": 2005,
+      "genre": "Thriller"
+    },
+    {
+      "id": 105,
+      "title": "Whispers in the Wind",
+      "author_id": 5,
+      "publication_year": 2010,
+      "genre": "Romance"
+    },
+    {
+      "id": 106,
+      "title": "The Enchanted Forest",
+      "author_id": 6,
+      "publication_year": 2018,
+      "genre": "Adventure"
+    },
+    {
+      "id": 107,
+      "title": "Secrets of the Past",
+      "author_id": 7,
+      "publication_year": 2008,
+      "genre": "Drama"
+    },
+    {
+      "id": 108,
+      "title": "City of Tomorrow",
+      "author_id": 8,
+      "publication_year": 2020,
+      "genre": "Science Fiction"
+    },
+    {
+      "id": 109,
+      "title": "Into the Unknown",
+      "author_id": 9,
+      "publication_year": 2023,
+      "genre": "Adventure"
+    },
+    {
+      "id": 110,
+      "title": "Whispering Pines",
+      "author_id": 10,
+      "publication_year": 2012,
+      "genre": "Mystery"
+    }
+  ],
+  "borrowers": [
+    {
+      "id": 1001,
+      "name": "Michael Johnson",
+      "email": "michael@example.com",
+      "books_borrowed": [101, 102]
+    },
+    {
+      "id": 1002,
+      "name": "Sophia Williams",
+      "email": "sophia@example.com",
+      "books_borrowed": [102, 103]
+    },
+    {
+      "id": 1003,
+      "name": "Ethan Davis",
+      "email": "ethan@example.com",
+      "books_borrowed": [101, 103]
+    },
+    {
+      "id": 1004,
+      "name": "Isabella Martinez",
+      "email": "isabella@example.com",
+      "books_borrowed": [104, 105]
+    },
+    {
+      "id": 1005,
+      "name": "Liam Anderson",
+      "email": "liam@example.com",
+      "books_borrowed": [105, 106]
+    },
+    {
+      "id": 1006,
+      "name": "Ava Taylor",
+      "email": "ava@example.com",
+      "books_borrowed": [106, 107]
+    },
+    {
+      "id": 1007,
+      "name": "Noah Martin",
+      "email": "noah@example.com",
+      "books_borrowed": [108, 109]
+    },
+    {
+      "id": 1008,
+      "name": "Emma Clark",
+      "email": "emma@example.com",
+      "books_borrowed": [110, 101]
+    },
+    {
+      "id": 1009,
+      "name": "Mia Robinson",
+      "email": "mia@example.com",
+      "books_borrowed": [102, 109]
+    },
+    {
+      "id": 1010,
+      "name": "William Turner",
+      "email": "william@example.com",
+      "books_borrowed": [103, 107]
+    }
+  ]
+}
