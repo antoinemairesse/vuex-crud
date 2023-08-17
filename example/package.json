@@ -14,6 +14,7 @@
     "core-js": "^3.8.3",
     "element-plus": "^2.3.9",
     "vue": "^3.2.13",
+    "vue-i18n": "^9.2.2",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
@@ -42,7 +43,8 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "vue/multi-word-component-names": "off"
+      "vue/multi-word-component-names": "off",
+      "vue/no-unused-components": "off"
     }
   },
   "browserslist": [

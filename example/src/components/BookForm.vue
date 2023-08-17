@@ -1,51 +1,68 @@
 <template>
   <div>
-    <h2 class="text-2xl font-poppins">Create Book</h2>
-    <div class="card">
-      <h3>New Book:</h3>
-      <el-form :model="newBook">
-        <el-form-item label="Title">
-          <el-input v-model="newBook.title"></el-input>
-        </el-form-item>
-        <el-form-item label="Year">
-          <el-input v-model="newBook.publication_year"></el-input>
-        </el-form-item>
-        <el-form-item label="Genre">
-          <el-input v-model="newBook.genre"></el-input>
-        </el-form-item>
-        <button
-          v-loading="creatingBook"
-          :disabled="creatingBook"
-          class="primary-btn"
-          @click="createBook(newBook)"
-        >
-          Create Book
-        </button>
-      </el-form>
-    </div>
+    <form @keyup.enter="submit" class="my-4">
+      <div>
+        <label for="book-title">Title</label>
+        <input id="book-title" type="text" v-model="newBook.title" />
+      </div>
+      <div>
+        <label for="book-year">Publication year</label>
+        <input
+          id="book-year"
+          type="number"
+          v-model="newBook.publication_year"
+        />
+      </div>
+      <div>
+        <label for="book-genre">Genre</label>
+        <input id="book-genre" type="text" v-model="newBook.genre" />
+      </div>
+    </form>
+    <button
+      v-loading="loading"
+      :disabled="loading"
+      class="primary-btn"
+      @click="submit"
+    >
+      {{ submitBtnText }}
+    </button>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-
 export default {
   name: 'BookForm',
+  props: {
+    book: {
+      type: [Object, null]
+    },
+    loading: {
+      type: [Boolean, null],
+      required: true
+    },
+    submitBtnText: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      newBook: {
+      newBook: this.book ? structuredClone(this.book) : this.resetBook()
+    }
+  },
+  methods: {
+    resetBook() {
+      return {
         id: Math.round(Math.random() * 10000),
         title: '',
         publication_year: '',
         genre: ''
       }
+    },
+    submit() {
+      this.$emit('submit', this.newBook)
+      this.newBook = this.resetBook()
     }
-  },
-  computed: {
-    ...mapState('books', ['creatingBook'])
-  },
-  methods: {
-    ...mapActions('books', ['createBook'])
   }
 }
 </script>

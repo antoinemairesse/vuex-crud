@@ -184,5 +184,28 @@
       "email": "william@example.com",
       "books_borrowed": [103, 107]
     }
+  ],
+  "filteredBooks": [
+    {
+      "id": 108,
+      "title": "City of Tomorrow",
+      "author_id": 8,
+      "publication_year": 2020,
+      "genre": "Science Fiction"
+    },
+    {
+      "id": 109,
+      "title": "Into the Unknown",
+      "author_id": 9,
+      "publication_year": 2023,
+      "genre": "Adventure"
+    },
+    {
+      "id": 110,
+      "title": "Whispering Pines",
+      "author_id": 10,
+      "publication_year": 2012,
+      "genre": "Mystery"
+    }
   ]
 }

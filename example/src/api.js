@@ -4,15 +4,6 @@ import MockAdapter from 'axios-mock-adapter'
 const mock = new MockAdapter(axios)
 import fakeData from '@/assets/fakeData.json'
 
-/*
- * I want a fetchBooks action that fetch all books & put them in a state called books (optional)
- * I want a getBook action that fetch one book by id & put it in a state called currentBook (optional)
- * I want a createBook action that creates a book
- * I want a updateBook action that updates a book
- * I want a deleteBook action that deletes a book
- * I want to be able to implement a custom store action in the same store to filter my books
- * */
-
 const getRandom = arr => {
   return arr[Math.floor(Math.random() * (arr.length - 1)) + 1]
 }
@@ -32,9 +23,9 @@ mock.onPost('/books').reply(config => {
   ]
 })
 mock.onPost('/books/filter').reply(200, {
-  books: fakeData.books
+  books: fakeData.filteredBooks
 })
-mock.onPut('/books').reply(config => {
+mock.onPut(/\/books\/\d+/).reply(config => {
   return [
     200,
     Object.assign(

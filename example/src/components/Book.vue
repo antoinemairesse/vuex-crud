@@ -5,6 +5,7 @@
     <h1>{{ book.title }},</h1>
     <h3>{{ book.genre }},</h3>
     <h5>{{ book.publication_year }}</h5>
+    <button class="primary-btn" @click="$emit('update')">Update</button>
     <button class="delete-button" @click="deleteBook(book.id)">Delete</button>
   </div>
 </template>

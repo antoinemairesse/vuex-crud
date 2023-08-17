@@ -24,13 +24,13 @@ class CrudModuleFactory {
     this.instance = instance
   }
 
-  create(resource: string): Module {
+  create(resource: string): CrudModule {
     const obj = Object.assign(
       Object.create(Object.getPrototypeOf(this.instance)),
       this.instance
     )
     obj.resourceName = new ResourceName(resource)
-    return obj.getModule()
+    return obj
   }
 }
 
@@ -44,6 +44,7 @@ class CrudModule {
   private idAttribute: string
   private additionalActions: Actions
   private additionalState: State
+  private additionalMutations: Mutations
   private commitState: boolean
   private updateStateAfterAction: boolean
   private refreshAfterAction: boolean
@@ -130,6 +131,12 @@ class CrudModule {
     this.additionalState = {}
 
     /**
+     * Additional mutations for the module.
+     * @type {Object}
+     */
+    this.additionalMutations = {}
+
+    /**
      * Whether to commit state changes.
      * @type {boolean}
      */
@@ -157,7 +164,9 @@ class CrudModule {
      * Function to handle action errors.
      * @type {Function}
      */
-    this.handleActionError = () => {}
+    this.handleActionError = (actionType, err) => {
+      throw err
+    }
   }
 
   private get states() {
@@ -236,17 +245,31 @@ class CrudModule {
   /**
    * Set additional custom actions for the CRUD module.
    * @param {Actions} actions - Custom action methods to be added to the module.
+   * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAdditionalActions(actions: Actions) {
+  setAdditionalActions(actions: Actions): this {
     this.additionalActions = actions
+    return this
   }
 
   /**
    * Set additional custom state properties for the CRUD module.
    * @param {State} state - Custom state properties to be added to the module.
+   * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAdditionalState(state: State) {
+  setAdditionalState(state: State): this {
     this.additionalState = state
+    return this
+  }
+
+  /**
+   * Set additional custom mutations for the CRUD module.
+   * @param {Mutations} mutations - Custom mutations to be added to the module.
+   * @returns {CrudModule} The updated CrudModule instance.
+   */
+  setAdditionalMutations(mutations: Mutations): this {
+    this.additionalMutations = mutations
+    return this
   }
 
   /**
@@ -287,33 +310,58 @@ class CrudModule {
       ...this.actions.reduce((accumulator, currentValue) => {
         return Object.assign(accumulator, { ...currentValue.mutations })
       }, {}),
-      [this.mutations.setItems]: (state, { data }) => {
-        state[this.states.items] = data
+
+      [this.mutations.setItems]: (state, payload) => {
+        payload = payload?.data ?? payload
+        state[this.states.items] = payload
       },
-      [this.mutations.setCurrentItem]: (state, { data }) => {
-        state[this.states.currentItem] = data
+
+      [this.mutations.setCurrentItem]: (state, payload) => {
+        payload = payload?.data ?? payload
+        state[this.states.currentItem] = payload
       },
-      [this.mutations.addItem]: (state, { data }) => {
-        if (!state[this.states.items]) state[this.states.items] = []
-        if (isArray<any>(state[this.states.items])) {
-          state[this.states.items].push(data)
-        } else throw new Error(`${this.states.items} state is not an array`)
-      },
-      [this.mutations.updateItem]: (state, { data }) => {
-        if (isArray<any>(state[this.states.items])) {
-          const index = state[this.states.items].findIndex(
-            e => e[this.idAttribute] === data[this.idAttribute]
+
+      [this.mutations.addItem]: (state, payload) => {
+        payload = payload?.data ?? payload
+        const items = state[this.states.items] ?? []
+
+        if (!isArray<object>(items))
+          throw new Error(
+            `state.${this.states.items} is not an array of objects`
           )
-          if (index !== -1) state[this.states.items][index] = data
-        } else throw new Error(`${this.states.items} state is not an array`)
+
+        items.push(payload)
       },
-      [this.mutations.deleteItem]: (state, { actionData }) => {
-        if (isArray<any>(state[this.states.items])) {
-          state[this.states.items] = state[this.states.items].filter(
-            e => e[this.idAttribute] !== actionData
+
+      [this.mutations.updateItem]: (state, payload) => {
+        payload = payload?.data ?? payload
+        const items = state[this.states.items]
+
+        if (!isArray<object>(items))
+          throw new Error(
+            `state.${this.states.items} is not an array of objects`
           )
-        }
-      }
+
+        const index = items.findIndex(
+          e => e[this.idAttribute] === payload[this.idAttribute]
+        )
+        if (index !== -1) items[index] = payload
+      },
+
+      [this.mutations.deleteItem]: (state, payload) => {
+        payload = payload?.actionData ?? payload
+        const items = state[this.states.items]
+
+        if (!isArray<object>(items))
+          throw new Error(
+            `state.${this.states.items} state is not an array of objects`
+          )
+
+        state[this.states.items] = items.filter(
+          e => e[this.idAttribute] !== payload
+        )
+      },
+      ...this.additionalMutations
     }
   }
 

@@ -1,24 +1,29 @@
 <template>
   <div>
-    <h2 class="text-2xl font-poppins">Create Author</h2>
     <div class="card">
-      <h3>New Author:</h3>
-      <el-form :model="newAuthor">
-        <el-form-item label="Name">
-          <el-input v-model="newAuthor.name"></el-input>
-        </el-form-item>
-        <el-form-item label="Birth Year">
-          <el-input v-model="newAuthor.birth_year"></el-input>
-        </el-form-item>
-        <button
-          v-loading="creatingAuthor"
-          :disabled="creatingAuthor"
-          @click="createAuthor(newAuthor)"
-          class="primary-btn"
-        >
-          Create Author
-        </button>
-      </el-form>
+      <h2 class="text-2xl font-poppins">Create Author</h2>
+      <form class="my-4" @keyup.enter="createAuthor(newAuthor)">
+        <div>
+          <label for="author-name">Name</label>
+          <input id="author-name" type="text" v-model="newAuthor.name" />
+        </div>
+        <div>
+          <label for="author-birth">Birth year</label>
+          <input
+            id="author-birth"
+            type="number"
+            v-model="newAuthor.birth_year"
+          />
+        </div>
+      </form>
+      <button
+        v-loading="creatingAuthor"
+        :disabled="creatingAuthor"
+        @click="createAuthor(newAuthor)"
+        class="primary-btn"
+      >
+        Create Author
+      </button>
     </div>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { CrudAction } from './types/types'
+import { CrudAction, Mutations } from './types/types'
 import type { ActionConfig, ActionContext } from './types/types'
 
 export default class Action {
@@ -26,7 +26,7 @@ export default class Action {
       handleActionError
     } = this.config
 
-    commit(loadingMutation.name, { data: true })
+    commit(loadingMutation.name, true)
 
     const { dataMapper, stateMapper, method, url, params, data } =
       generateAxiosRequestConfig(resourceName.original, actionType, actionData)
@@ -44,7 +44,7 @@ export default class Action {
     } catch (err) {
       handleActionError(actionType, err, resourceName.original)
     } finally {
-      commit(loadingMutation.name, { data: false })
+      commit(loadingMutation.name, false)
     }
   }
 
@@ -74,11 +74,11 @@ export default class Action {
     }
   }
 
-  get mutations() {
+  get mutations(): Mutations {
     const { loadingMutation } = this.config
 
     return {
-      [loadingMutation.name]: function (state: any, { data }: any) {
+      [loadingMutation.name]: function (state, data) {
         state[loadingMutation.state] = Boolean(data)
       }
     }

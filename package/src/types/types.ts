@@ -4,7 +4,7 @@ import ResourceName from '../ResourceName'
 export type Commit = (type: string, payload?: any) => void
 
 export type State = {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export type ActionContext = {
@@ -17,7 +17,7 @@ export type ActionContext = {
 }
 
 export type Actions = {
-  [key: string]: (context: ActionContext, data: any) => any
+  [key: string]: (context: ActionContext, payload: any) => any
 }
 
 export type LoadingMutation = {
@@ -25,10 +25,7 @@ export type LoadingMutation = {
   state: string
 }
 
-export type Mutation = (
-  state: State,
-  data: { data: any; actionData: any }
-) => void
+export type Mutation = (state: State, payload: any) => void
 
 export type Mutations = {
   [key: string]: Mutation
