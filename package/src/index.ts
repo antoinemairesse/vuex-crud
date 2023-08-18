@@ -12,11 +12,15 @@ import type {
   CustomAPIDefinitionFunction,
   APIDefinition,
   CrudModuleConfig,
-  PartialAPIDefinition
+  PartialAPIDefinition,
+  Action
 } from './types/types'
 import { CrudAction } from './types/types'
 import { isArray } from './utils'
 
+/**
+ * CRUD Module Factory, used if you want to use the same config for multiple crud modules.
+ */
 class CrudModuleFactory {
   instance: CrudModule
 
@@ -24,6 +28,11 @@ class CrudModuleFactory {
     this.instance = instance
   }
 
+  /**
+   * Creates a new CrudModule based on the factory config.
+   * @param {string} resource the resource name
+   * @returns {CrudModule} the newly created CrudModule
+   */
   create(resource: string): CrudModule {
     const obj = Object.assign(
       Object.create(Object.getPrototypeOf(this.instance)),
@@ -460,7 +469,59 @@ class CrudModule {
     return this
   }
 
-  get config(): CrudModuleConfig {
+  /**
+   * Helper function to create a custom action that also creates the associated loading state & mutation.
+   * @param {Action} action - The vuex action.
+   * @param {string} loadingStateName - The name of the loading state
+   * @param {string} loadingMutationName - The name of the mutation function that sets the loading state
+   * @returns {CrudModule} The updated CrudModule instance.
+   * @example
+   *
+   * async function fetchFilteredBooks({ commit }, actionData) {
+   *   const { data } = await api({
+   *     method: 'POST',
+   *     url: '/books/filter',
+   *     data: actionData
+   *   })
+   *   commit('SET_BOOKS', data)
+   * }
+   *
+   * CrudModule.createCustomAction(fetchFilteredBooks,'fetchingFilteredBooks', 'SET_FETCHING_FILTERED_BOOKS');
+   */
+  createCustomAction(
+    action: Action,
+    loadingStateName: string,
+    loadingMutationName: string
+  ): this {
+    this.additionalState = {
+      ...this.additionalState,
+      [loadingStateName]: false
+    }
+    this.additionalMutations = {
+      ...this.additionalMutations,
+      [loadingMutationName]: function (state, data) {
+        state[loadingStateName] = Boolean(data)
+      }
+    }
+
+    this.additionalActions = {
+      ...this.additionalActions,
+      [action.name]: async (context, data) => {
+        context.commit(loadingMutationName, true)
+        try {
+          await action(context, data)
+        } catch (err) {
+          this.handleActionError(action.name, err, this.resourceName.original)
+        } finally {
+          context.commit(loadingMutationName, false)
+        }
+      }
+    }
+
+    return this
+  }
+
+  private get config(): CrudModuleConfig {
     return {
       generateAxiosRequestConfig: this.generateAxiosRequestConfig,
       resourceName: this.resourceName,

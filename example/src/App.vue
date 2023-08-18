@@ -21,7 +21,7 @@
         class="primary-btn"
         v-loading="fetchingFilteredBooks"
         :disabled="fetchingFilteredBooks"
-        @click="fetchFilteredBooks"
+        @click="fetchFilteredBooks({ filter: 'toto' })"
       >
         Fetch Filtered Books
       </button>

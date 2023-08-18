@@ -25,44 +25,38 @@ const onActionError = (action, data, resource) => {
   ElMessage.error({ message: t(`${resource}.${action}.error`), duration: 500 })
 }
 
-const CrudFactory = new CrudModule('')
+const AuthorsModule = new CrudModule('authors')
   .setAxios(api)
   .setCustomAPIDefinition(customAPIDef)
   .onActionError(onActionError)
   .onActionSuccess(onActionSuccess)
-  .getFactory()
+
+const CrudFactory = AuthorsModule.getFactory()
+
+async function fetchFilteredBooks({ commit }, actionData) {
+  // to show loading state
+  await new Promise(resolve => {
+    setTimeout(resolve, 5000)
+  })
+  const { data } = await api({
+    method: 'POST',
+    url: '/books/filter',
+    data: actionData
+  })
+  commit('SET_BOOKS', data)
+  onActionSuccess('fetchFilteredBooks', null, 'books')
+}
 
 export default createStore({
   modules: {
     books: CrudFactory.create('books')
-      .setAdditionalState({ fetchingFilteredBooks: false })
-      .setAdditionalMutations({
-        SET_FETCHING_FILTERED_BOOKS: (state, data) => {
-          state.fetchingFilteredBooks = data
-        }
-      })
-      .setAdditionalActions({
-        fetchFilteredBooks: async ({ commit }) => {
-          commit('SET_FETCHING_FILTERED_BOOKS', true)
-
-          // to show loading state
-          await new Promise(resolve => {
-            setTimeout(resolve, 5000)
-          })
-
-          try {
-            const { data } = await api({ method: 'POST', url: '/books/filter' })
-            commit('SET_BOOKS', data.books)
-            onActionSuccess('fetchFilteredBooks', null, 'books')
-          } catch (e) {
-            onActionError('fetchFilteredBooks', null, 'books')
-          } finally {
-            commit('SET_FETCHING_FILTERED_BOOKS', false)
-          }
-        }
-      })
+      .createCustomAction(
+        fetchFilteredBooks,
+        'fetchingFilteredBooks',
+        'SET_FETCHING_FILTERED_BOOKS'
+      )
       .getModule(),
-    authors: CrudFactory.create('authors').getModule(),
+    authors: AuthorsModule.getModule(),
     borrowers: CrudFactory.create('borrowers').getModule()
     // OR :
     // books: new CrudModule('books').setAxios(api).setCustomAPIDefinition(customAPIDef).onActionSuccess(onActionSuccess).getModule(),

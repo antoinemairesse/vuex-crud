@@ -16,8 +16,10 @@ export type ActionContext = {
   rootGetters: any
 }
 
+export type Action = (context: ActionContext, payload: any) => any
+
 export type Actions = {
-  [key: string]: (context: ActionContext, payload: any) => any
+  [key: string]: Action
 }
 
 export type LoadingMutation = {

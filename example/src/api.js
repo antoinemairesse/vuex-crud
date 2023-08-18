@@ -22,8 +22,9 @@ mock.onPost('/books').reply(config => {
     )
   ]
 })
-mock.onPost('/books/filter').reply(200, {
-  books: fakeData.filteredBooks
+mock.onPost('/books/filter').reply(config => {
+  if (!JSON.parse(config?.data)?.filter) return [400, null]
+  return [200, fakeData.filteredBooks]
 })
 mock.onPut(/\/books\/\d+/).reply(config => {
   return [
