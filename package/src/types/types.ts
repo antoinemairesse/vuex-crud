@@ -77,6 +77,8 @@ export type CrudModuleConfig = {
   resourceName: ResourceName
   axios: AxiosStatic
   commitState: boolean
+  updateStateAfterAction: boolean
+  refreshAfterAction: boolean
   handleActionSuccess: ActionHandler
   handleActionError: ActionHandler
 }

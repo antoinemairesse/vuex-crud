@@ -60,17 +60,25 @@ class CrudModule {
   private handleActionSuccess: ActionHandler
   private handleActionError: ActionHandler
   private axios: AxiosStatic | axios.AxiosStatic
+  private actionSelection: (keyof typeof CrudAction)[]
 
   /**
    * Create a new CrudModule instance.
-   * @param {string} resource - The name of the resource for the CRUD operations.
+   * @param {string} resource - The name of the resource for the CRUD actions.
+   * @param {CrudAction[]} actionSelection - Selection of CRUD actions to add to the module
    */
-  constructor(resource: string) {
+  constructor(resource: string, actionSelection?: (keyof typeof CrudAction)[]) {
     /**
      * The resource name.
      * @type {ResourceName}
      */
     this.resourceName = new ResourceName(resource)
+
+    /**
+     * A crud action array to choose only the actions that you want.
+     * @type {CrudAction[]}
+     */
+    this.actionSelection = actionSelection || [...Object.values(CrudAction)]
 
     /**
      * Generates an API definition object for various CRUD actions on a specified resource.
@@ -152,16 +160,16 @@ class CrudModule {
     this.commitState = true
 
     /**
-     * Whether to update state after an action.
+     * whether to update the state after an action (create/update/delete) is performed.
      * @type {boolean}
      */
     this.updateStateAfterAction = false
 
     /**
-     * Whether to refresh after an action.
+     * whether to refresh data after an action (create/update/delete) is performed.
      * @type {boolean}
      */
-    this.refreshAfterAction = false
+    this.refreshAfterAction = true
 
     /**
      * Function to handle action success.
@@ -256,7 +264,7 @@ class CrudModule {
    * @param {Actions} actions - Custom action methods to be added to the module.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAdditionalActions(actions: Actions): this {
+  setAdditionalActions(actions: Actions): CrudModule {
     this.additionalActions = actions
     return this
   }
@@ -266,7 +274,7 @@ class CrudModule {
    * @param {State} state - Custom state properties to be added to the module.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAdditionalState(state: State): this {
+  setAdditionalState(state: State): CrudModule {
     this.additionalState = state
     return this
   }
@@ -276,7 +284,7 @@ class CrudModule {
    * @param {Mutations} mutations - Custom mutations to be added to the module.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAdditionalMutations(mutations: Mutations): this {
+  setAdditionalMutations(mutations: Mutations): CrudModule {
     this.additionalMutations = mutations
     return this
   }
@@ -287,9 +295,11 @@ class CrudModule {
    */
   private buildActions(): Actions {
     return {
-      ...this.actions.reduce((accumulator, currentValue) => {
-        return Object.assign(accumulator, { ...currentValue.actions })
-      }, {}),
+      ...this.actions
+        .filter(e => this.actionSelection.includes(e.type))
+        .reduce((accumulator, currentValue) => {
+          return Object.assign(accumulator, { ...currentValue.actions })
+        }, {}),
       ...this.additionalActions
     }
   }
@@ -393,7 +403,7 @@ class CrudModule {
    * @param {AxiosStatic} axios - The Axios instance to be used for API requests.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setAxios(axios: AxiosStatic): this {
+  setAxios(axios: AxiosStatic): CrudModule {
     this.axios = axios
     return this
   }
@@ -403,37 +413,37 @@ class CrudModule {
    * @param {string} value - The name of the ID attribute.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setIdAttribute(value: string): this {
+  setIdAttribute(value: string): CrudModule {
     this.idAttribute = value
     return this
   }
 
   /**
-   * Set whether to update the state after an action is performed.
+   * Set whether to update the state after an action (create/update/delete) is performed.
    * @param {boolean} value - Whether to update the state after an action.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setUpdateStateAfterAction(value: boolean): this {
+  setUpdateStateAfterAction(value: boolean): CrudModule {
     this.updateStateAfterAction = Boolean(value)
     return this
   }
 
   /**
-   * Set whether to refresh data after an action is performed.
+   * Set whether to refresh data after an action (create/update/delete) is performed.
    * @param {boolean} value - Whether to refresh data after an action.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setRefreshAfterAction(value: boolean): this {
+  setRefreshAfterAction(value: boolean): CrudModule {
     this.refreshAfterAction = Boolean(value)
     return this
   }
 
   /**
-   * Set whether to commit state changes during actions.
+   * Set whether to commit the result of fetch actions.
    * @param {boolean} value - Whether to commit state changes during actions.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setCommitState(value: boolean): this {
+  setCommitState(value: boolean): CrudModule {
     this.commitState = Boolean(value)
     return this
   }
@@ -444,7 +454,7 @@ class CrudModule {
    * @param {CustomAPIDefinitionFunction} func - The custom API definition function that will be used to define the API.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  setCustomAPIDefinition(func: CustomAPIDefinitionFunction): this {
+  setCustomAPIDefinition(func: CustomAPIDefinitionFunction): CrudModule {
     this.customAPIDefinition = func
     return this
   }
@@ -454,7 +464,7 @@ class CrudModule {
    * @param {ActionHandler} func - The function to be executed on action success.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  onActionSuccess(func: ActionHandler): this {
+  onActionSuccess(func: ActionHandler): CrudModule {
     this.handleActionSuccess = func
     return this
   }
@@ -464,7 +474,7 @@ class CrudModule {
    * @param {ActionHandler} func - The function to be executed on action error.
    * @returns {CrudModule} The updated CrudModule instance.
    */
-  onActionError(func: ActionHandler): this {
+  onActionError(func: ActionHandler): CrudModule {
     this.handleActionError = func
     return this
   }
@@ -492,7 +502,7 @@ class CrudModule {
     action: Action,
     loadingStateName: string,
     loadingMutationName: string
-  ): this {
+  ): CrudModule {
     this.additionalState = {
       ...this.additionalState,
       [loadingStateName]: false
@@ -527,8 +537,10 @@ class CrudModule {
       resourceName: this.resourceName,
       axios: this.axios,
       commitState: this.commitState,
+      updateStateAfterAction: this.updateStateAfterAction,
       handleActionSuccess: this.handleActionSuccess,
-      handleActionError: this.handleActionError
+      handleActionError: this.handleActionError,
+      refreshAfterAction: this.refreshAfterAction
     }
   }
 

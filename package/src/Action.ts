@@ -13,17 +13,17 @@ export default class Action {
    * @param {ActionContext} context - The Vuex context object for state and commit function.
    * @param {any} actionData - Data to be used in the action.
    */
-  async execute({ commit }: ActionContext, actionData: any) {
+  async execute({ commit, dispatch }: ActionContext, actionData: any) {
     const {
       loadingMutation,
       generateAxiosRequestConfig,
       actionType,
       resourceName,
       axios,
-      commitState,
       mutationName,
       handleActionSuccess,
-      handleActionError
+      handleActionError,
+      refreshAfterAction
     } = this.config
 
     commit(loadingMutation.name, true)
@@ -33,8 +33,12 @@ export default class Action {
 
     try {
       const res = await axios({ method, url, params, data })
-      if (commitState)
+      if (this.commitAction)
         commit(mutationName, { data: stateMapper(res.data), actionData })
+      if (this.isAction(actionType) && refreshAfterAction) {
+        await dispatch(`fetch${resourceName.plural}`)
+      }
+
       handleActionSuccess(
         actionType,
         stateMapper(res.data),
@@ -46,6 +50,13 @@ export default class Action {
     } finally {
       commit(loadingMutation.name, false)
     }
+  }
+
+  get commitAction(): boolean {
+    const { commitState, actionType, updateStateAfterAction } = this.config
+    return (
+      commitState && (this.isAction(actionType) ? updateStateAfterAction : true)
+    )
   }
 
   isAction(type: any) {
@@ -62,6 +73,10 @@ export default class Action {
     return {
       [loadingMutation.state]: null
     }
+  }
+
+  get type() {
+    return this.config.actionType
   }
 
   get actions() {

@@ -4,6 +4,7 @@
   "_version": "20.1.0",
 
   "compilerOptions": {
+    "declaration": true,
     "lib": ["es2023", "dom"],
     "module": "Node16",
     "target": "es2022",

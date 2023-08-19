@@ -27,6 +27,8 @@ const onActionError = (action, data, resource) => {
 
 const AuthorsModule = new CrudModule('authors')
   .setAxios(api)
+  .setRefreshAfterAction(false)
+  .setUpdateStateAfterAction(true)
   .setCustomAPIDefinition(customAPIDef)
   .onActionError(onActionError)
   .onActionSuccess(onActionSuccess)
