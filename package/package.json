@@ -1,8 +1,9 @@
 {
   "name": "@antoinemairesse/vuex-crud",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Vuex helper to create CRUD modules easily",
   "main": "lib/index.js",
+  "files": ["lib"],
   "scripts": {
     "build": "tsc && npm link",
     "test": "echo \"Error: no test specified\" && exit 1",
