@@ -1,6 +1,6 @@
 {
   "name": "@antoinemairesse/vuex-crud",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Vuex helper to create CRUD modules easily",
   "main": "lib/index.js",
   "scripts": {

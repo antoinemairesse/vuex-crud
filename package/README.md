@@ -104,13 +104,13 @@ export default createStore({
     - State affected by mutation: `books`
 
 ## Examples
-Check out the [example](https://github.com/AntoineMairesse/vuex-crud/tree/main/example) directory for usage examples.
+Check out the <a href="https://github.com/AntoineMairesse/vuex-crud/tree/main/example" target="_blank">example</a> directory for usage examples.
 
 ## Advanced Usage
 
 ### The following options are available when creating a new CrudModule :
 
-For types references, check out: [types](https://github.com/AntoineMairesse/vuex-crud/blob/main/package/src/types/types.ts)
+For types references, check out: <a href="https://github.com/AntoineMairesse/vuex-crud/blob/main/package/src/types/types.ts" target="_blank">types</a>
 
 ```typescript
 
