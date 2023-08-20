@@ -1,6 +1,6 @@
 {
   "name": "@antoinemairesse/vuex-crud",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Vuex helper to create CRUD modules easily",
   "main": "lib/index.js",
   "scripts": {
@@ -9,7 +9,11 @@
     "lint": "eslint --ext .js,.ts src",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\""
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AntoineMairesse/vuex-crud"
+  },
+  "author": "Antoine MAIRESSE",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.4.0",
